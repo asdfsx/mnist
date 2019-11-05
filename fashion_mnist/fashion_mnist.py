@@ -4,11 +4,12 @@ from tensorflow import keras
 
 # Helper libraries
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 import subprocess
+import gzip
 
 import tempfile
+import argparse
 
 FLAGS = None
 
@@ -36,9 +37,9 @@ def load_data(data_dir):
         x_test = np.frombuffer(
             imgpath.read(), np.uint8, offset=16).reshape(len(y_test), 28, 28)
 
-  return (x_train, y_train), (x_test, y_test)
+    return (x_train, y_train), (x_test, y_test)
 
-def main(_):
+def main():
     tf.logging.set_verbosity(tf.logging.ERROR)
     print(tf.__version__)
 
@@ -83,7 +84,7 @@ def main(_):
     print('export_path = {}\n'.format(export_path))
     if os.path.isdir(export_path):
         print('\nAlready saved a model, cleaning up\n')
-        !rm -r {export_path}
+        os.removedirs(export_path)
     
     tf.saved_model.simple_save(
         keras.backend.get_session(),
